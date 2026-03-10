@@ -22,4 +22,13 @@ class AuthService {
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
+
+  Future<void> updateAuthUser({String? email, String? password}) async {
+    await _supabase.auth.updateUser(
+      UserAttributes(
+        email: email,
+        password: password,
+      ),
+    );
+  }
 }

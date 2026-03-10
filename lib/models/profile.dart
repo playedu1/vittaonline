@@ -50,4 +50,24 @@ class Profile {
       'created_at': createdAt.toIso8601String(),
     };
   }
+
+  Profile copyWith({
+    String? fullName,
+    UserRole? role,
+    UserStatus? status,
+    DateTime? lastActive,
+    String? clinicId,
+    bool? active,
+  }) {
+    return Profile(
+      id: id,
+      fullName: fullName ?? this.fullName,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      lastActive: lastActive ?? this.lastActive,
+      clinicId: clinicId ?? this.clinicId,
+      active: active ?? this.active,
+      createdAt: createdAt,
+    );
+  }
 }

@@ -5,6 +5,9 @@ import 'package:vittaonline/providers/auth_provider.dart';
 import 'package:vittaonline/screens/login_screen.dart';
 
 import 'package:vittaonline/screens/chat_screen.dart';
+import 'package:vittaonline/screens/shifts_screen.dart';
+import 'package:vittaonline/screens/admin_screen.dart';
+import 'package:vittaonline/models/profile.dart';
 import 'package:vittaonline/widgets/main_layout.dart';
 
 final routerNotifierProvider = Provider<RouterNotifier>((ref) {
@@ -24,22 +27,20 @@ class RouterNotifier extends ChangeNotifier {
 final appRouter = Provider<GoRouter>((ref) {
   final notifier = ref.read(routerNotifierProvider);
   final authStateAsync = ref.watch(authStateProvider);
+  final profileAsync = ref.watch(currentProfileProvider);
 
   return GoRouter(
     initialLocation: '/chat',
     refreshListenable: notifier,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
     redirect: (context, state) {
-      if (authStateAsync.isLoading) {
-        debugPrint('GoRouter: Auth state is loading...');
+      if (authStateAsync.isLoading || profileAsync.isLoading) {
         return null;
       }
 
       final authState = authStateAsync.value;
       final isAuthenticated = authState?.session != null;
       final isLoggingIn = state.uri.path == '/login';
-
-      debugPrint('GoRouter: redirect check - path: ${state.uri.path}, authenticated: $isAuthenticated');
 
       if (!isAuthenticated) {
         return isLoggingIn ? null : '/login';
@@ -49,40 +50,36 @@ final appRouter = Provider<GoRouter>((ref) {
         return '/chat';
       }
 
+      // Role-based access control for /admin
+      if (state.uri.path == '/admin') {
+        final profile = profileAsync.value;
+        final isAdmin = profile?.role == UserRole.admin;
+        if (!isAdmin) {
+          return '/chat';
+        }
+      }
+
       return null;
     },
     routes: [
       GoRoute(
         path: '/login',
-        builder: (context, state) {
-          debugPrint('GoRouter: building LoginScreen');
-          return const LoginScreen();
-        },
+        builder: (context, state) => const LoginScreen(),
       ),
       ShellRoute(
-        builder: (context, state, child) {
-          debugPrint('GoRouter: building ShellRoute (MainLayout)');
-          return MainLayout(child: child);
-        },
+        builder: (context, state, child) => MainLayout(child: child),
         routes: [
           GoRoute(
             path: '/chat',
-            builder: (context, state) {
-              debugPrint('GoRouter: building ChatScreen');
-              return const ChatScreen();
-            },
+            builder: (context, state) => const ChatScreen(),
           ),
           GoRoute(
             path: '/shifts',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('VittaOnline - Shifts Screen (Phase 5)')),
-            ),
+            builder: (context, state) => const ShiftsScreen(),
           ),
           GoRoute(
             path: '/admin',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('VittaOnline - Admin Screen (Phase 6)')),
-            ),
+            builder: (context, state) => const AdminScreen(),
           ),
         ],
       ),

@@ -33,7 +33,7 @@ CREATE POLICY "Users can update their own profile"
 CREATE TABLE public.messages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   clinic_id TEXT NOT NULL,
-  sender_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   content TEXT,
   media_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -42,15 +42,27 @@ CREATE TABLE public.messages (
 -- Enable RLS for messages
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Messages are viewable by everyone"
+CREATE POLICY "Messages are viewable by everyone in same clinic"
   ON public.messages FOR SELECT
   USING ( true );
 
 CREATE POLICY "Users can insert their own messages"
   ON public.messages FOR INSERT
-  WITH CHECK ( auth.uid() = sender_id );
+  WITH CHECK ( auth.uid() = user_id );
 
--- 3. Automatic profile creation on signup (Trigger)
+-- 3. Storage Setup (Policies for Private Bucket)
+-- Run these after creating the 'chat-media' bucket
+-- Bucket must be created as PRIVATE in the dashboard
+
+CREATE POLICY "Authenticated users can upload images"
+ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'chat-media');
+
+CREATE POLICY "Authenticated users can view chat images"
+ON storage.objects FOR SELECT TO authenticated
+USING (bucket_id = 'chat-media');
+
+-- 4. Automatic profile creation on signup (Trigger)
 -- This might be what's failing if it was already partially set up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$

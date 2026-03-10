@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vittaonline/config/theme.dart';
 import 'package:vittaonline/providers/auth_provider.dart';
@@ -26,9 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    debugPrint('LoginScreen: attempting login for ${_emailController.text}');
     if (!_formKey.currentState!.validate()) {
-      debugPrint('LoginScreen: validation failed');
       return;
     }
 
@@ -40,13 +39,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      debugPrint('LoginScreen: login success');
     } catch (e) {
-      debugPrint('LoginScreen: login error: $e');
+      if (kDebugMode) {
+        debugPrint('Login error: $e');
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro: $e'), // Showing specific error for debugging
+          const SnackBar(
+            content: Text('Não foi possível completar a ação. Tente novamente.'),
             backgroundColor: VittaOnlineTheme.alertColor,
           ),
         );
@@ -58,7 +58,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('LoginScreen: building UI');
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(

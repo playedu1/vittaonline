@@ -5,6 +5,7 @@ import 'package:vittaonline/providers/auth_provider.dart';
 import 'package:vittaonline/widgets/role_badge.dart';
 import 'package:vittaonline/widgets/online_indicator.dart';
 import 'package:vittaonline/models/profile.dart';
+import 'package:vittaonline/providers/ui_providers.dart';
 
 class UserHeader extends ConsumerWidget {
   const UserHeader({super.key});
@@ -12,12 +13,46 @@ class UserHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
+    final isCollapsed = ref.watch(sidebarCollapsedProvider);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isCollapsed ? 8 : 16),
       child: profileAsync.when(
         data: (profile) {
           if (profile == null) return const SizedBox.shrink();
+
+          if (isCollapsed) {
+            return Center(
+              child: InkWell(
+                onTap: () {
+                  // Show a small menu or tooltip if needed, but for now just the logout as a tooltip
+                },
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: VittaOnlineTheme.primaryColor.withValues(alpha: 0.1),
+                      radius: 20,
+                      child: Text(
+                        profile.fullName.substring(0, 1).toUpperCase(),
+                        style: const TextStyle(
+                          color: VittaOnlineTheme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: OnlineIndicator(
+                        isOnline: profile.status == UserStatus.online,
+                        size: 8,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
           return Row(
             children: [
