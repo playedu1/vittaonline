@@ -14,6 +14,23 @@ class ProfileService {
     return Profile.fromJson(data);
   }
 
+  Future<List<Profile>> getClinicStaff(String clinicId) async {
+    final data = await _supabase
+        .from('profiles')
+        .select()
+        .eq('clinic_id', clinicId)
+        .order('full_name');
+    
+    return (data as List).map((json) => Profile.fromJson(json)).toList();
+  }
+
+  Future<void> updateProfile(Profile profile) async {
+    await _supabase
+        .from('profiles')
+        .update(profile.toJson())
+        .eq('id', profile.id);
+  }
+
   Future<void> updateLastActive(String userId) async {
     await _supabase
         .from('profiles')

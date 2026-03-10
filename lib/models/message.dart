@@ -1,4 +1,3 @@
-
 class Message {
   final String id;
   final String clinicId;
@@ -24,7 +23,7 @@ class Message {
     return Message(
       id: json['id'] as String,
       clinicId: json['clinic_id'] as String,
-      senderId: json['sender_id'] as String,
+      senderId: json['user_id'] as String,
       content: json['content'] as String,
       mediaUrl: json['media_url'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
@@ -38,7 +37,7 @@ class Message {
     return {
       'id': id,
       'clinic_id': clinicId,
-      'sender_id': senderId,
+      'user_id': senderId,
       'content': content,
       'media_url': mediaUrl,
       'created_at': createdAt.toIso8601String(),

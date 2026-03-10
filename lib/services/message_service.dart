@@ -26,7 +26,7 @@ class MessageService {
 
     await _supabase.from('messages').insert({
       'clinic_id': clinicId,
-      'sender_id': user.id,
+      'user_id': user.id,
       'content': content,
       'media_url': mediaUrl,
     });
@@ -39,9 +39,9 @@ class MessageService {
         .eq('clinic_id', clinicId)
         .order('created_at', ascending: false)
         .map((data) => data.map((json) => Message.fromJson(json)).toList());
-    
-    // Note: The simple .stream() doesn't automatically join profiles. 
-    // In a real app, we might want to use a different approach for realtime joins 
+
+    // Note: The simple .stream() doesn't automatically join profiles.
+    // In a real app, we might want to use a different approach for realtime joins
     // or handle profile fetching separately in the provider.
   }
 
@@ -52,8 +52,10 @@ class MessageService {
     String mimeType,
   ) async {
     final path = '$clinicId/$fileName';
-    
-    await _supabase.storage.from('chat-media').uploadBinary(
+
+    await _supabase.storage
+        .from('chat-media')
+        .uploadBinary(
           path,
           fileBytes,
           fileOptions: FileOptions(contentType: mimeType),

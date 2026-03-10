@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:vittaonline/config/theme.dart';
 import 'package:vittaonline/providers/auth_provider.dart';
 import 'package:vittaonline/providers/messages_provider.dart';
@@ -15,6 +18,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  bool _isUploading = false;
 
   @override
   void dispose() {
@@ -29,6 +33,54 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     ref.read(messagesProvider.notifier).sendMessage(text);
     _messageController.clear();
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+
+    if (image == null) return;
+
+    setState(() => _isUploading = true);
+
+    try {
+      final bytes = await image.readAsBytes();
+      final mimeType = lookupMimeType(image.path) ?? 'image/jpeg';
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.name}';
+      
+      final profile = await ref.read(currentProfileProvider.future);
+      if (profile == null) return;
+
+      final mediaUrl = await ref.read(messageServiceProvider).uploadMedia(
+        profile.clinicId,
+        fileName,
+        bytes,
+        mimeType,
+      );
+
+      if (mediaUrl != null) {
+        await ref.read(messagesProvider.notifier).sendMessage(
+          '[Imagem]',
+          mediaUrl: mediaUrl,
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error uploading/sending image: $e');
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Não foi possível completar a ação. Tente novamente.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploading = false);
+      }
+    }
   }
 
   @override
@@ -89,7 +141,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Erro ao carregar mensagens: $err')),
+              error: (err, stack) {
+                if (kDebugMode) {
+                  debugPrint('Chat messages loading error: $err');
+                }
+                return const Center(child: Text('Não foi possível completar a ação. Tente novamente.'));
+              },
             ),
           ),
           _buildInputBar(),
@@ -115,13 +172,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Row(
           children: [
             IconButton(
-              onPressed: () {
-                // TODO: Implement image upload
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Upload de imagem em breve!')),
-                );
-              },
-              icon: const Icon(Icons.add_photo_alternate_outlined),
+              onPressed: _isUploading ? null : _pickAndUploadImage,
+              icon: _isUploading 
+                ? const SizedBox(
+                    width: 24, 
+                    height: 24, 
+                    child: CircularProgressIndicator(strokeWidth: 2)
+                  )
+                : const Icon(Icons.add_photo_alternate_outlined),
               color: VittaOnlineTheme.primaryColor,
             ),
             Expanded(
