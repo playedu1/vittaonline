@@ -26,7 +26,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) return;
+    debugPrint('LoginScreen: attempting login for ${_emailController.text}');
+    if (!_formKey.currentState!.validate()) {
+      debugPrint('LoginScreen: validation failed');
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -36,12 +40,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // GoRouter redirect guard will handle navigation to /chat
+      debugPrint('LoginScreen: login success');
     } catch (e) {
+      debugPrint('LoginScreen: login error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Credenciais inválidas ou erro ao conectar.'),
+          SnackBar(
+            content: Text('Erro: $e'), // Showing specific error for debugging
             backgroundColor: VittaOnlineTheme.alertColor,
           ),
         );
@@ -53,6 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('LoginScreen: building UI');
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
