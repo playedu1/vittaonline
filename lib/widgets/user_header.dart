@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vittaonline/config/theme.dart';
 import 'package:vittaonline/providers/auth_provider.dart';
+import 'package:vittaonline/widgets/role_badge.dart';
+import 'package:vittaonline/widgets/online_indicator.dart';
+import 'package:vittaonline/models/profile.dart';
 
 class UserHeader extends ConsumerWidget {
   const UserHeader({super.key});
@@ -45,23 +48,9 @@ class UserHeader extends ConsumerWidget {
                     ),
                     Row(
                       children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: VittaOnlineTheme.successColor,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          profile.role.name.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        OnlineIndicator(isOnline: profile.status == UserStatus.online),
+                        const SizedBox(width: 6),
+                        RoleBadge(role: profile.role, isSmall: true),
                       ],
                     ),
                   ],

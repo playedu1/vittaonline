@@ -3,8 +3,9 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'Por favor, insira seu email';
     }
+    final trimmedValue = value.trim();
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
+    if (!emailRegex.hasMatch(trimmedValue)) {
       return 'Por favor, insira um email válido';
     }
     return null;
