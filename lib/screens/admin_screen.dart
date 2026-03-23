@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vittaonline/config/theme.dart';
 import 'package:vittaonline/providers/admin_providers.dart';
 import 'package:vittaonline/providers/auth_provider.dart';
-import 'package:vittaonline/models/clinic.dart';
+
 import 'package:vittaonline/models/profile.dart';
 
 class AdminScreen extends ConsumerStatefulWidget {

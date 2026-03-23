@@ -107,7 +107,7 @@ class _ShiftFormState extends ConsumerState<ShiftForm> {
             children: [
               staffAsync.when(
                 data: (staff) => DropdownButtonFormField<String>(
-                  value: _selectedUserId,
+                  initialValue: _selectedUserId,
                   decoration: const InputDecoration(labelText: 'Profissional'),
                   items: staff.map((s) {
                     return DropdownMenuItem(
@@ -166,7 +166,7 @@ class _ShiftFormState extends ConsumerState<ShiftForm> {
                 },
               ),
               DropdownButtonFormField<ShiftStatus>(
-                value: _status,
+                initialValue: _status,
                 decoration: const InputDecoration(labelText: 'Status'),
                 items: ShiftStatus.values.map((s) {
                   return DropdownMenuItem(
