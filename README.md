@@ -31,7 +31,11 @@ Atualmente, o sistema conta com as seguintes funcionalidades implementadas:
     ```bash
     git clone https://github.com/playedu1/vittaonline.git
     ```
-3.  Configure as variáveis de ambiente no arquivo `.env` ou em `lib/config/supabase_config.dart`.
+3.  Configure as variáveis de ambiente no arquivo `.env` ou em `lib/config/supabase_config.dart`:
+    ```dart
+    static const String url = 'YOUR_SUPABASE_URL';
+    static const String anonKey = 'YOUR_SUPABASE_ANON_KEY';
+    ```
 4.  Execute a instalação das dependências:
     ```bash
     flutter pub get
