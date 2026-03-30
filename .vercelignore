@@ -1,0 +1,30 @@
+# Ignore everything not needed for the static deployment to keep upload under 100MB
+.git
+.dart_tool
+android
+ios
+linux
+macos
+windows
+test
+lib
+
+# Ignore the heavy build sub-folders individually — build/web MUST be kept
+build/app
+build/windows
+build/flutter_assets
+build/reports
+build/native_assets
+build/native_hooks
+build/.cxx
+
+# Other non-essential files
+.env
+.env*.local
+README.md
+analysis_options.yaml
+pubspec.*
+*.sql
+*.iml
+.idea
+.agents
