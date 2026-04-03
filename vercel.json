@@ -1,8 +1,8 @@
 {
   "cleanUrls": true,
   "framework": null,
-  "buildCommand": "export PATH=\"$PWD/flutter/bin:$PATH\" && flutter --version && flutter config --no-analytics && flutter pub get && flutter build web --release",
-  "installCommand": "if command -v apt-get >/dev/null 2>&1; then apt-get update -y && apt-get install -y curl xz-utils; elif command -v dnf >/dev/null 2>&1; then dnf install -y curl xz; elif command -v microdnf >/dev/null 2>&1; then microdnf install -y curl xz; elif command -v yum >/dev/null 2>&1; then yum install -y curl xz; else echo 'No supported package manager found (need curl + xz)' && exit 1; fi && curl -sL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.4-stable.tar.xz -o flutter.tar.xz && tar -xJf flutter.tar.xz",
+  "buildCommand": "sh scripts/vercel-build-flutter.sh",
+  "installCommand": "sh scripts/vercel-install-flutter.sh",
   "outputDirectory": "build/web",
   "rewrites": [
     {
