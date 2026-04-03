@@ -1,32 +1,30 @@
-# Ignore everything not needed for the static deployment to keep upload under 100MB
-.git
+# Vercel precisa do código-fonte para executar `flutter build web`.
+# Então NÃO ignore `lib/`, `web/`, `pubspec.yaml`, `pubspec.lock`, etc.
+
+# Tooling / artefatos locais
 .dart_tool
+.idea
+.agents
+*.iml
+
+# Segredos (não enviar)
+.env
+.env*.local
+
+# Build local (o Vercel vai gerar o próprio `build/web` no build)
+build
+
+# Pastas de outras plataformas (opcional ignorar pra web)
 android
 ios
 linux
 macos
 windows
-test
-lib
 
-# Ignore the heavy build sub-folders individually — build/web MUST be kept
-build/app
-build/windows
-build/flutter_assets
-build/reports
-build/native_assets
-build/native_hooks
-build/.cxx
-
-# Other non-essential files
-.env
-.env*.local
+# Misc (opcional)
 README.md
-analysis_options.yaml
-pubspec.*
 *.sql
-*.iml
-.idea
-.agents
+
+# Arquivos grandes de planejamento (não usados no build)
 vitta-online-v2-plano-projectlibre.csv
 vitta-online-v2-plano-projectlibre.xml
