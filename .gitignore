@@ -79,3 +79,6 @@ supabase_config.dart
 .agents/
 .vercel
 .env*.local
+
+vitta-online-v2-plano-projectlibre.xml
+vitta-online-v2-plano-projectlibre.csv
