@@ -73,7 +73,7 @@ app.*.map.json
 **/macos/Flutter/ephemeral
 
 .env
-supabase_config.dart
+/supabase_config.dart
 
 # skills
 .agents/

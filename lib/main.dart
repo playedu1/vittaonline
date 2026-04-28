@@ -12,6 +12,7 @@ Future<void> main() async {
   await initializeDateFormatting('pt_BR', null);
   
   // Initialize Supabase
+  SupabaseConfig.validate();
   await Supabase.initialize(
     url: SupabaseConfig.url,
     anonKey: SupabaseConfig.anonKey,
