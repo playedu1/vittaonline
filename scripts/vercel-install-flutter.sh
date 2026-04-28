@@ -47,7 +47,8 @@ fi
 
 FLUTTER_VERSION="3.38.4"
 FLUTTER_TAR="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
-FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_TAR}"
+FLUTTER_URL_PRIMARY="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_TAR}"
+FLUTTER_URL_MIRROR="https://storage.flutter-io.cn/flutter_infra_release/releases/stable/linux/${FLUTTER_TAR}"
 
 if [ -d "flutter" ]; then
   echo "[install] flutter/ already exists, skipping download"
@@ -55,5 +56,10 @@ if [ -d "flutter" ]; then
 fi
 
 echo "[install] downloading Flutter ${FLUTTER_VERSION}"
-curl -sSL "$FLUTTER_URL" -o flutter.tar.xz
+echo "[install] trying: ${FLUTTER_URL_PRIMARY}"
+if ! curl -fSsL "$FLUTTER_URL_PRIMARY" -o flutter.tar.xz; then
+  echo "[install] primary URL failed, trying mirror"
+  echo "[install] trying: ${FLUTTER_URL_MIRROR}"
+  curl -fSsL "$FLUTTER_URL_MIRROR" -o flutter.tar.xz
+fi
 tar -xJf flutter.tar.xz

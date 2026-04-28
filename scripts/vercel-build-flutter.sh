@@ -34,7 +34,8 @@ echo "[build] flutter --version"
 
 echo "[build] flutter pub get"
 "$FLUTTER_BIN" config --no-analytics >/dev/null 2>&1 || true
-"$FLUTTER_BIN" pub get -v
+"$FLUTTER_BIN" config --enable-web >/dev/null 2>&1 || true
+"$FLUTTER_BIN" pub get
 
 echo "[build] flutter build web --release"
 "$FLUTTER_BIN" build web --release
