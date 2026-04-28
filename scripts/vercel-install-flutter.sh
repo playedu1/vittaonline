@@ -45,7 +45,7 @@ else
   echo "[install] non-root build user; skipping package installs"
 fi
 
-FLUTTER_VERSION="3.38.4"
+FLUTTER_VERSION="${FLUTTER_VERSION:-3.41.8}"
 FLUTTER_TAR="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
 FLUTTER_URL_PRIMARY="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/${FLUTTER_TAR}"
 FLUTTER_URL_MIRROR="https://storage.flutter-io.cn/flutter_infra_release/releases/stable/linux/${FLUTTER_TAR}"
