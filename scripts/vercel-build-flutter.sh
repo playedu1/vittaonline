@@ -38,4 +38,19 @@ echo "[build] flutter pub get"
 "$FLUTTER_BIN" pub get
 
 echo "[build] flutter build web --release"
-"$FLUTTER_BIN" build web --release
+if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+  echo "[build] missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables" >&2
+  echo "[build] configure them in Vercel Project Settings > Environment Variables" >&2
+  exit 1
+fi
+
+DEFINES_FILE="$PWD/.dart-defines.vercel.json"
+trap 'rm -f "$DEFINES_FILE"' EXIT
+cat >"$DEFINES_FILE" <<EOF
+{
+  "SUPABASE_URL": "${SUPABASE_URL}",
+  "SUPABASE_ANON_KEY": "${SUPABASE_ANON_KEY}"
+}
+EOF
+
+"$FLUTTER_BIN" build web --release --dart-define-from-file="$DEFINES_FILE"
